@@ -8,6 +8,7 @@ exceptiongroup==1.0.1
 filelock==3.8.0
 flake8==5.0.4
 Flask==2.2.2
+Flask-SQLAlchemy==3.0.2
 greenlet==2.0.1
 identify==2.5.8
 iniconfig==1.1.1
