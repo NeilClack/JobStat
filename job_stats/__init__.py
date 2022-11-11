@@ -20,10 +20,14 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+
     # a simple page that says hello
     @app.route('/hello')
     def hello():
         print(app.config['SECRET_KEY'])
         return 'Hello, World!'
 
+    from . import jobs
+    app.register_blueprint(jobs.bp)
+    
     return app
