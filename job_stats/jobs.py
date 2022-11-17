@@ -16,7 +16,7 @@ def index():
 
 
 @bp.route("/get", methods=["GET"])
-def get_all():
+def get_jobs():
     """
     query: string: title: Filters results by title. Looks for the existence of "title" in the actual title, not exact matching.
     query: string: location: Filters results by location by fuzzy matching.
