@@ -37,6 +37,10 @@ def get_jobs():
     if 'salary' in args:
         listings = listings.filter(Listing.salary >= args['salary'])
 
+    if 'company' in args:
+        company_string = f"%{args['company']}%"
+        listings = listings.filter(Listing.company.ilike(company_string))
+
     if 'desc' in args:
         if bool(args['desc']):
             listings = listings.order_by(Listing.posted.desc())
@@ -51,3 +55,8 @@ def get_jobs():
     listing_schema = ListingSchema(many=True)
 
     return jsonify(listing_schema.dump(listings)), 200
+
+
+@bp.route('/add', methods=["POST"])
+def add_job():
+    pass
