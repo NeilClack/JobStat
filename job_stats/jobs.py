@@ -43,6 +43,11 @@ def get_jobs():
         else:
             listings = listings.order_by(Listing.posted)
 
+    listings = listings.all()
+
+    if not listings:
+        return "No jobs listed here. Please alter your query.", 400
+
     listing_schema = ListingSchema(many=True)
 
     return jsonify(listing_schema.dump(listings)), 200
