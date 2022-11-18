@@ -1,11 +1,7 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    jsonify,
-    current_app
-)
+from flask import Blueprint, render_template, request, jsonify
 from .models import Listing, ListingSchema
+from marshmallow.exceptions import ValidationError
+from datetime import datetime
 
 bp = Blueprint("jobs", __name__, url_prefix="/")
 
@@ -15,48 +11,58 @@ def index():
     return render_template("index.html")
 
 
-@bp.route("/get", methods=["GET"])
+@bp.route("/jobs", methods=["GET", "POST"])
 def get_jobs():
-    """
-    query: string: title: Filters results by title. Looks for the existence of "title" in the actual title, not exact matching.
-    query: string: location: Filters results by location by fuzzy matching.
-    query: integer: salary: Returns results filtered by equal to or greater than desired salary. Does not currently support hourly wages.   
-    query: bool: desc: if True, order by descending, else ascending.
-    """
+    if request.method == "GET":
+        listings = Listing.query
 
-    listings = Listing.query
+        args = request.args
 
-    args = request.args
+        if "title" in args:
+            listings = listings.filter_by(title=args["title"])
 
-    if 'title' in args:
-        listings = listings.filter_by(title=args['title'])
+        if "location" in args:
+            listings = listings.filter(Listing.location.ilike(args["location"]))
 
-    if 'location' in args:
-        listings = listings.filter(Listing.location.ilike(args['location']))
+        if "salary" in args:
+            listings = listings.filter(Listing.salary >= args["salary"])
 
-    if 'salary' in args:
-        listings = listings.filter(Listing.salary >= args['salary'])
+        if "company" in args:
+            company_string = f"%{args['company']}%"
+            listings = listings.filter(Listing.company.ilike(company_string))
 
-    if 'company' in args:
-        company_string = f"%{args['company']}%"
-        listings = listings.filter(Listing.company.ilike(company_string))
+        if "desc" in args:
+            if bool(args["desc"]):
+                listings = listings.order_by(Listing.posted.desc())
+            else:
+                listings = listings.order_by(Listing.posted)
 
-    if 'desc' in args:
-        if bool(args['desc']):
-            listings = listings.order_by(Listing.posted.desc())
-        else:
-            listings = listings.order_by(Listing.posted)
+        listings = listings.all()
 
-    listings = listings.all()
+        if not listings:
+            return "No jobs listed here. Please alter your query.", 400
 
-    if not listings:
-        return "No jobs listed here. Please alter your query.", 400
+        listing_schema = ListingSchema(many=True)
 
-    listing_schema = ListingSchema(many=True)
+        return jsonify(listing_schema.dump(listings)), 200
 
-    return jsonify(listing_schema.dump(listings)), 200
+    if request.method == "POST":
+        data = request.json
+        
+        
+        listing_schema = ListingSchema()
 
+        try:
+            new_listing = listing_schema.load(data)
+        except ValidationError:
+            return jsonify({"Error": "Provided data is not valid. Please ensure all fields are properlly formatted and contain relavent information."}), 400
 
-@bp.route('/add', methods=["POST"])
-def add_job():
-    pass
+        # job_listing = Listing(
+        #     title=data['title'],
+        #     company=data['company'],
+        #     location=data['location'],
+        #     posted=datetime.strptime(data['posted'], "%Y-%m-%d"),
+        #     entered=datetime.strptime(data['entered'], "%Y-%m-%dT%H:%M:%S.%f")
+        # )
+        
+        return listing_schema.dumps(new_listing), 200
