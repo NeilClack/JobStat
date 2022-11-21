@@ -12,7 +12,7 @@ def create_app(test_config=None):
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_mapping({
-            'SQLALCHEMY_DATABASE_URI' : f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@localhost:5432/jobs',
+            'SQLALCHEMY_DATABASE_URI' : os.getenv('POSTGRES_DB_URI'),
             'SECRET_KEY' : "sdfghjiuytrewsdfvghjuytrewsdfghytredcvbhytredcvbhytre",
             "JSONIFY_PRETTYPRINT_REGULAR" : True
         })
