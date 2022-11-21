@@ -48,14 +48,20 @@ def get_jobs():
 
     if request.method == "POST":
         data = request.json
-        
-        
+
         listing_schema = ListingSchema()
 
         try:
             new_listing = listing_schema.load(data)
         except ValidationError:
-            return jsonify({"Error": "Provided data is not valid. Please ensure all fields are properlly formatted and contain relavent information."}), 400
+            return (
+                jsonify(
+                    {
+                        "Error": "Provided data is not valid. Please ensure all fields are properlly formatted and contain relavent information."
+                    }
+                ),
+                400,
+            )
 
         # job_listing = Listing(
         #     title=data['title'],
@@ -64,5 +70,5 @@ def get_jobs():
         #     posted=datetime.strptime(data['posted'], "%Y-%m-%d"),
         #     entered=datetime.strptime(data['entered'], "%Y-%m-%dT%H:%M:%S.%f")
         # )
-        
+
         return listing_schema.dumps(new_listing), 200
