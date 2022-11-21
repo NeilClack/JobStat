@@ -1,0 +1,3 @@
+graft job_stats/static
+graft job_stats/templates
+global-exclude *.pycpip
