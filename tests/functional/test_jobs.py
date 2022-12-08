@@ -1,6 +1,5 @@
-import pytest
-import datetime
 import json
+from datetime import datetime
 
 
 def test_index(client):
@@ -38,5 +37,21 @@ def test_jobs_post(client):
     WHEN a POST request is made to '/jobs'
     THEN ccheck that the application accepts the JSON and returns it unchanged.
     """
-    pass
+    json_data = {
+        "title": "Data Analyst",
+        "company": "Ally Financial",
+        "url": "https://www.indeed.com",
+        "location": "Remote",
+        "salary": 90000,
+        "summary": "Lorem Ipsum",
+        "posted": "2022-11-09",
+        "entered": "2022-11-10 16:11:03.369562"
+    }
     
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    res = client.post("/jobs", headers=headers)
+
+    assert res.status_code == 200
