@@ -14,10 +14,10 @@ from ..extensions import db
 import sys
 
 
-bp = Blueprint("jobs", __name__, url_prefix="/")
+bp = Blueprint("api", __name__, url_prefix="/api")
 
 
-@bp.route("/api", methods=["GET"])
+@bp.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
 
