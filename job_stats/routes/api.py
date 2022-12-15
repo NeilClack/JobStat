@@ -8,7 +8,7 @@ from ..models import Listing, ListingSchema
 from marshmallow import ValidationError
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.schema import Table, MetaData
-from sqlalchemy.exc import OperationalError, ProgrammingError
+from sqlalchemy.exc import ProgrammingError, IntegrityError
 
 from ..extensions import db
 import sys
@@ -53,11 +53,22 @@ def add_job():
 
         try:
             conn.execute(insert_stmt)
-            msg = {"msg": "Insert statement executed. New jobs saved to database"}
+            msg = {
+                "msg": "Insert statement executed. Job saved to db or already exists."
+            }
             return jsonify(msg), 200
         except ProgrammingError as e:
-            msg = {"msg": "Unable to execute statement.", "stmt": insert_stmt}
+            msg = {
+                "msg": "Unable to execute statement.",
+                "Insert statement": str(insert_stmt),
+            }
             return jsonify(msg), 500
+        except IntegrityError as e:
+            msg = {
+                "IntegrityError": "Unable to execute statement. Likely missing column values in data source.",
+                "Insert Statement:": str(insert_stmt),
+            }
+            return jsonify(msg), 400
 
 
 @bp.route("/get", methods=["GET"])
