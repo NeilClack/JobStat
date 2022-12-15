@@ -11,7 +11,7 @@ from ..extensions import db
 bp = Blueprint("jobs", __name__, url_prefix="/")
 
 
-@bp.route("/", methods=["GET"])
+@bp.route("/api", methods=["GET"])
 def index():
     return render_template("index.html")
 
