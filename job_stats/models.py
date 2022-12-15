@@ -14,7 +14,7 @@ class Listing(db.Model):
     salary = db.Column(NUMERIC)
     summary = db.Column(TEXT)
     posted = db.Column(DATE, nullable=False)
-    entered = db.Column(TIMESTAMP, nullable=False)
+    scraped = db.Column(TIMESTAMP, nullable=False)
 
 
 class ListingSchema(ma.SQLAlchemyAutoSchema):

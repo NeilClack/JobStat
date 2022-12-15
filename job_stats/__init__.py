@@ -1,8 +1,8 @@
 from flask import Flask
 from .extensions import db
 from flask_marshmallow import Marshmallow
+from .routes import api
 import os
-
 
 
 def create_app(test_config=None):
@@ -11,11 +11,13 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_mapping({
-            'SQLALCHEMY_DATABASE_URI' : f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@localhost:5432/jobs',
-            'SECRET_KEY' : "sdfghjiuytrewsdfvghjuytrewsdfghytredcvbhytredcvbhytre",
-            "JSONIFY_PRETTYPRINT_REGULAR" : True
-        })
+        app.config.from_mapping(
+            {
+                "SQLALCHEMY_DATABASE_URI": os.getenv("POSTGRES_DB_URI"),
+                "SECRET_KEY": "sdfghjiuytrewsdfvghjuytrewsdfghytredcvbhytredcvbhytre",
+                "JSONIFY_PRETTYPRINT_REGULAR": True,
+            }
+        )
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -30,17 +32,9 @@ def create_app(test_config=None):
     db.init_app(app)
     # Initialize Marshmallow
     from .extensions import ma
+
     ma.init_app(app)
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        print(app.config['SECRET_KEY'])
-        return 'Hello, World!'
+    app.register_blueprint(api.bp)
 
-    with app.app_context():
-
-        from . import jobs
-        app.register_blueprint(jobs.bp)
-    
     return app

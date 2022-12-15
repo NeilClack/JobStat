@@ -1,0 +1,32 @@
+# Create
+POST http://localhost:5000/add HTTP/1.1
+Content-Type: application/json
+
+[
+    {
+        "title": "Bogus Job Listing",
+        "company": "Not a real company",
+        "location": "Anywhere",
+        "salary": 400000,
+        "summary": "This is not a real job listing. Delete this later. DELETE",
+        "url": "http://Dontforgettochangethiseachtime.com",
+        "posted": "2022-12-13",
+        "scraped": "2022-12-13T00:05:10.442112"
+    },
+    {
+        "title": "Bogus Job Listing",
+        "company": "Not a real company",
+        "location": "Anywhere",
+        "salary": 400000,
+        "summary": "This is not a real job listing. Delete this later. DELETE",
+        "url": "http://Dontforgettochangethiseachtime.com1",
+        "posted": "2022-12-13",
+        "scraped": "2022-12-13T00:05:10.442112"
+    }
+]
+
+# Read
+
+# Update
+
+# Delete

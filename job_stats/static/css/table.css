@@ -1,0 +1,23 @@
+table {
+    border: 1px dashed;
+    margin: auto;
+}
+
+table th:first-child {
+    border-left: none;
+}
+
+table th {
+    border-left: 1px solid;
+    border-bottom: 1px dashed;
+}
+
+table td:first-child {
+    border-left: none;
+}
+
+table td {
+    border-bottom: none;
+    border-left: 1px solid;
+    padding: 2px 4px 2px 4px;
+}
