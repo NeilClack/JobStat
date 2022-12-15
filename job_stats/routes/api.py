@@ -6,7 +6,12 @@ from flask import (
 )
 from ..models import Listing, ListingSchema
 from marshmallow import ValidationError
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.schema import Table, MetaData
+from sqlalchemy.exc import OperationalError, ProgrammingError
+
 from ..extensions import db
+import sys
 
 
 bp = Blueprint("jobs", __name__, url_prefix="/")
@@ -29,11 +34,30 @@ def add_job():
             return jsonify({"ValidationError": err.messages})
     else:
         try:
-            new_job = ListingSchema().load(data)
+            new_jobs = ListingSchema().load(data)
         except ValidationError as err:
             return jsonify({"ValidationError": err.messages})
 
-    return jsonify({"msg": "Saved"}), 200
+    with db.engine.connect() as conn:
+        table = Table("listings", MetaData(), autoload_with=db.engine)
+        try:
+            insert_stmt = (
+                insert(table)
+                .values(data)
+                .on_conflict_do_nothing(index_elements=["url"])
+            )
+        except:
+            print(sys.exc_info)
+            msg = {"msg": "Unable to create insert statement."}
+            return jsonify(msg), 500
+
+        try:
+            conn.execute(insert_stmt)
+            msg = {"msg": "Insert statement executed. New jobs saved to database"}
+            return jsonify(msg), 200
+        except ProgrammingError as e:
+            msg = {"msg": "Unable to execute statement.", "stmt": insert_stmt}
+            return jsonify(msg), 500
 
 
 @bp.route("/get", methods=["GET"])
@@ -63,9 +87,9 @@ def get_all():
 
     if "desc" in args:
         if bool(args["desc"]):
-            listings = listings.order_by(Listing.posted.desc())
+            listings = listings.order_by(Listing.psysted.desc())
         else:
-            listings = listings.order_by(Listing.posted)
+            listings = listings.order_by(Listing.psysted)
 
     listing_schema = ListingSchema(many=True)
 
