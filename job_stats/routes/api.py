@@ -5,6 +5,7 @@ from flask import (
     jsonify,
 )
 from ..models import Listing, ListingSchema
+from marshmallow import ValidationError
 from ..extensions import db
 
 
@@ -20,13 +21,17 @@ def index():
 def add_job():
 
     data = request.json
-    new_job_schema = ListingSchema()
 
     if type(data) == list:
-        for job in data:
-            new_job = new_job_schema.load(job)
+        try:
+            new_jobs = ListingSchema(many=True).load(data)
+        except ValidationError as err:
+            return jsonify({"ValidationError": err.messages})
     else:
-        new_job = new_job_schema.load(job)
+        try:
+            new_job = ListingSchema().load(data)
+        except ValidationError as err:
+            return jsonify({"ValidationError": err.messages})
 
     return jsonify({"msg": "Saved"}), 200
 
