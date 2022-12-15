@@ -31,12 +31,12 @@ def add_job():
         try:
             new_jobs = ListingSchema(many=True).load(data)
         except ValidationError as err:
-            return jsonify({"ValidationError": err.messages})
+            return jsonify({"ValidationError": err.messages}), 400
     else:
         try:
             new_jobs = ListingSchema().load(data)
         except ValidationError as err:
-            return jsonify({"ValidationError": err.messages})
+            return jsonify({"ValidationError": err.messages}), 400
 
     with db.engine.connect() as conn:
         table = Table("listings", MetaData(), autoload_with=db.engine)
@@ -56,7 +56,7 @@ def add_job():
             msg = {
                 "msg": "Insert statement executed. Job saved to db or already exists."
             }
-            return jsonify(msg), 200
+            return jsonify(msg), 201
         except ProgrammingError as e:
             msg = {
                 "msg": "Unable to execute statement.",
