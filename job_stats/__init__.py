@@ -15,9 +15,9 @@ def create_app(test_config=None):
             {
                 "SQLALCHEMY_DATABASE_URI": os.getenv("POSTGRES_DB_URI"),
                 "SECRET_KEY": "sdfghjiuytrewsdfvghjuytrewsdfghytredcvbhytredcvbhytre",
-                "JSONIFY_PRETTYPRINT_REGULAR": True,
             }
         )
+        app.json.compact = True
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)

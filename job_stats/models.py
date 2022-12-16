@@ -30,4 +30,5 @@ class ListingSchema(Schema):
 
     class Meta:
         model = Listing
-        json_module = simplejson
+        # json_module is deprecated. use render_module instead.
+        render_module = simplejson
