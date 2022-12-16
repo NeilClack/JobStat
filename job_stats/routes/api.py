@@ -29,12 +29,12 @@ def add_job():
 
     if type(data) == list:
         try:
-            new_jobs = ListingSchema(many=True).load(data)
+            ListingSchema(many=True).load(data)
         except ValidationError as err:
             return jsonify({"ValidationError": err.messages}), 400
     else:
         try:
-            new_jobs = ListingSchema().load(data)
+            ListingSchema().load(data)
         except ValidationError as err:
             return jsonify({"ValidationError": err.messages}), 400
 
