@@ -91,3 +91,64 @@ def test_integrity_errors(client):
     # This is a 400 because this can only happen if the request was missing fields.
     assert response.status_code == 400
     assert "IntegrityError" in response.json
+
+
+def test_integrity_errors_fail_one_of_many(client):
+    response = client.post(
+        "/api/add",
+        json=[
+            {
+                "company": "Not a real company",
+                "location": "Anywhere",
+                "salary": 400000,
+                "summary": "This is not a real job listing. Delete this later. DELETE",
+                "url": "http://Dontforgettochangethiseachtime.com",
+                "posted": "2022-12-13",
+                "scraped": "2022-12-13T00:05:10.442112",
+            },
+            {
+                "title": "Delete",
+                "company": "Not a real company",
+                "location": "Anywhere",
+                "salary": 400000,
+                "summary": "This is not a real job listing. Delete this later. DELETE",
+                "url": "http://Dontforgettochangethiseachtime.com",
+                "posted": "2022-12-13",
+                "scraped": "2022-12-13T00:05:10.442112",
+            },
+        ],
+    )
+
+    # This is a 400 because this can only happen if the request was missing fields.
+    assert response.status_code == 400
+    assert "IntegrityError" in response.json
+
+
+def test_integrity_errors_fail_many_of_many(client):
+    response = client.post(
+        "/api/add",
+        json=[
+            {
+                "company": "Not a real company",
+                "location": "Anywhere",
+                "salary": 400000,
+                "summary": "This is not a real job listing. Delete this later. DELETE",
+                "url": "http://Dontforgettochangethiseachtime.com",
+                "posted": "2022-12-13",
+                "scraped": "2022-12-13T00:05:10.442112",
+            },
+            {
+                "company": "Not a real company",
+                "location": "Anywhere",
+                "salary": 400000,
+                "summary": "This is not a real job listing. Delete this later. DELETE",
+                "url": "http://Dontforgettochangethiseachtime.com",
+                "posted": "2022-12-13",
+                "scraped": "2022-12-13T00:05:10.442112",
+            },
+        ],
+    )
+
+    # This is a 400 because this can only happen if the request was missing fields.
+    assert response.status_code == 400
+    assert "IntegrityError" in response.json
